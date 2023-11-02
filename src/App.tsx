@@ -14,7 +14,7 @@ function App() {
       <input type="text" />
       <div className="column">
         {buttons.map((row) => (
-          <div>
+          <div className="row">
             {row.map((button) => (
               <button key={button}>{button}</button>
             ))}
