@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 
 function App() {
@@ -9,14 +10,20 @@ function App() {
     ["0", ".", "="],
   ];
 
+  const [operation, setOperation] = useState(0);
+
+  const editInput = (e) => setOperation(operation + e.target.innerText);
+
   return (
     <>
-      <input type="text" />
+      <input type="text" value={operation} readOnly={true} />
       <div className="column">
         {buttons.map((row) => (
           <div className="row">
             {row.map((button) => (
-              <button key={button}>{button}</button>
+              <button key={button} onClick={(e) => editInput(e)}>
+                {button}
+              </button>
             ))}
           </div>
         ))}
