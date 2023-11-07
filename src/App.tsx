@@ -10,13 +10,15 @@ function App() {
     ["0", ".", "="],
   ];
 
-  const [operation, setOperation] = useState(0);
+  const operators = ["÷", "x", "-", "+"];
 
-  const editInput = (e) => setOperation(operation + e.target.innerText);
+  const [firstNumber, setFirstNumber] = useState("");
+
+  const editInput = (e) => setFirstNumber(firstNumber + e.target.innerText);
 
   return (
     <>
-      <input type="text" value={operation} readOnly={true} />
+      <input type="text" value={firstNumber || "0"} readOnly={true} />
       <div className="column">
         {buttons.map((row) => (
           <div className="row">
