@@ -12,16 +12,34 @@ function App() {
 
   const [displayFirstNumber, setDisplayFirstNumber] = useState(true);
   const [firstNumber, setFirstNumber] = useState("");
-  const operation = useRef(null);
+  const operation = useRef("");
   const [secondNumber, setSecondNumber] = useState("");
 
-  const operators = ["÷", "x", "-", "+"];
+  const operators: Map<string, string> = new Map([
+    ["/", "divide"],
+    ["x", "multiply"],
+    ["-", "subtract"],
+    ["+", "add"],
+  ]);
+
+  const operations: Map<string, () => number> = new Map([
+    ["divide", () => parseFloat(firstNumber) / parseFloat(secondNumber)],
+    ["multiply", () => parseFloat(firstNumber) * parseFloat(secondNumber)],
+    ["add", () => parseFloat(firstNumber) + parseFloat(secondNumber)],
+    ["subtract", () => parseFloat(firstNumber) - parseFloat(secondNumber)],
+  ]);
 
   const editInput = (e) => {
-    const value = e.target.innerText;
-    if (operators.includes(value)) {
-      operation.current = value;
+    const value = e.target.value;
+    if (operators.has(value) && !operation.current) {
+      operation.current = operators.get(value)!;
       setDisplayFirstNumber(false);
+    } else if ((operators.has(value) && operation.current) || value === "=") {
+      const op = operations.get(operation.current)!;
+      setFirstNumber(op().toString());
+      setSecondNumber("");
+      if (value !== "=") operation.current = operators.get(value)!;
+      else operation.current = "";
     } else if (operation.current) setSecondNumber(secondNumber + value);
     else setFirstNumber(firstNumber + e.target.innerText);
   };
@@ -39,7 +57,11 @@ function App() {
         {buttons.map((row) => (
           <div className="row">
             {row.map((button) => (
-              <button key={button} onClick={(e) => editInput(e)}>
+              <button
+                key={button}
+                onClick={(e) => editInput(e)}
+                value={button === "÷" ? "/" : button}
+              >
                 {button}
               </button>
             ))}
