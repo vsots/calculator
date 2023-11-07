@@ -41,7 +41,11 @@ function App() {
       if (value !== "=") operation.current = operators.get(value)!;
       else operation.current = "";
     } else if (operation.current) setSecondNumber(secondNumber + value);
-    else setFirstNumber(firstNumber + e.target.innerText);
+    else if (value === "AC") {
+      setFirstNumber("");
+      setSecondNumber("");
+      setDisplayFirstNumber(true);
+    } else setFirstNumber(firstNumber + e.target.innerText);
   };
 
   return (
