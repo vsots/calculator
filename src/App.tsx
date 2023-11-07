@@ -15,30 +15,28 @@ function App() {
   const operation = useRef("");
   const [secondNumber, setSecondNumber] = useState("");
 
-  const operators: Map<string, string> = new Map([
-    ["/", "divide"],
-    ["x", "multiply"],
-    ["-", "subtract"],
-    ["+", "add"],
-  ]);
+  const operators: Array<string> = ["/", "x", "-", "+"];
 
   const operations: Map<string, () => number> = new Map([
-    ["divide", () => parseFloat(firstNumber) / parseFloat(secondNumber)],
-    ["multiply", () => parseFloat(firstNumber) * parseFloat(secondNumber)],
-    ["add", () => parseFloat(firstNumber) + parseFloat(secondNumber)],
-    ["subtract", () => parseFloat(firstNumber) - parseFloat(secondNumber)],
+    ["/", () => parseFloat(firstNumber) / parseFloat(secondNumber)],
+    ["x", () => parseFloat(firstNumber) * parseFloat(secondNumber)],
+    ["+", () => parseFloat(firstNumber) + parseFloat(secondNumber)],
+    ["-", () => parseFloat(firstNumber) - parseFloat(secondNumber)],
   ]);
 
   const editInput = (e) => {
-    const value = e.target.value;
-    if (operators.has(value) && !operation.current) {
-      operation.current = operators.get(value)!;
+    const value: string = e.target.value;
+    if (operators.includes(value) && !operation.current) {
+      operation.current = value;
       setDisplayFirstNumber(false);
-    } else if ((operators.has(value) && operation.current) || value === "=") {
+    } else if (
+      (operators.includes(value) && operation.current) ||
+      value === "="
+    ) {
       const op = operations.get(operation.current)!;
       setFirstNumber(op().toString());
       setSecondNumber("");
-      if (value !== "=") operation.current = operators.get(value)!;
+      if (value !== "=") operation.current = value;
       else operation.current = "";
     } else if (operation.current) setSecondNumber(secondNumber + value);
     else if (value === "AC") {
