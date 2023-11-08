@@ -30,7 +30,8 @@ function App() {
       setFirstNumber("");
       setSecondNumber("");
       setDisplayFirstNumber(true);
-      if (value === "C") setButtons([["AC", ...buttons[0]], ...buttons]);
+      if (value === "C")
+        setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
     } else if (operators.includes(value) && !operation.current) {
       operation.current = value;
       setDisplayFirstNumber(false);
@@ -44,7 +45,11 @@ function App() {
       if (value !== "=") operation.current = value;
       else operation.current = "";
     } else if (operation.current) setSecondNumber(secondNumber + value);
-    else setFirstNumber(firstNumber + value);
+    else {
+      setFirstNumber(firstNumber + value);
+      if (buttons[0][0] === "AC")
+        setButtons([["C", ...buttons[0].slice(1)], ...buttons.slice(1)]);
+    }
   };
 
   return (
@@ -58,7 +63,7 @@ function App() {
       />
       <div className="column">
         {buttons.map((row) => (
-          <div className="row">
+          <div className="row" key={row[1]}>
             {row.map((button) => (
               <button
                 key={button}
