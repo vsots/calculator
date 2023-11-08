@@ -2,13 +2,13 @@ import { useState, useRef } from "react";
 import "./App.css";
 
 function App() {
-  const buttons = [
+  const [buttons, setButtons] = useState([
     ["AC", "+/-", "%", "÷"],
     ["7", "8", "9", "x"],
     ["4", "5", "6", "-"],
     ["1", "2", "3", "+"],
     ["0", ".", "="],
-  ];
+  ]);
 
   const [displayFirstNumber, setDisplayFirstNumber] = useState(true);
   const [firstNumber, setFirstNumber] = useState("");
@@ -26,7 +26,12 @@ function App() {
 
   const editInput = (e) => {
     const value: string = e.target.value;
-    if (operators.includes(value) && !operation.current) {
+    if (value === "AC" || value === "C") {
+      setFirstNumber("");
+      setSecondNumber("");
+      setDisplayFirstNumber(true);
+      if (value === "C") setButtons([["AC", ...buttons[0]], ...buttons]);
+    } else if (operators.includes(value) && !operation.current) {
       operation.current = value;
       setDisplayFirstNumber(false);
     } else if (
@@ -39,11 +44,7 @@ function App() {
       if (value !== "=") operation.current = value;
       else operation.current = "";
     } else if (operation.current) setSecondNumber(secondNumber + value);
-    else if (value === "AC") {
-      setFirstNumber("");
-      setSecondNumber("");
-      setDisplayFirstNumber(true);
-    } else setFirstNumber(firstNumber + value);
+    else setFirstNumber(firstNumber + value);
   };
 
   return (
