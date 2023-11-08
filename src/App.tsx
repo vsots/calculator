@@ -43,7 +43,7 @@ function App() {
       setFirstNumber("");
       setSecondNumber("");
       setDisplayFirstNumber(true);
-    } else setFirstNumber(firstNumber + e.target.innerText);
+    } else setFirstNumber(firstNumber + value);
   };
 
   return (
