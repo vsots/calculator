@@ -27,11 +27,22 @@ function App() {
   const editInput = (e) => {
     const value: string = e.target.value;
     if (value === "AC" || value === "C") {
-      setFirstNumber("");
-      setSecondNumber("");
-      setDisplayFirstNumber(true);
-      if (value === "C")
-        setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
+      if (value === "C") {
+        if (displayFirstNumber) {
+          setFirstNumber("");
+          setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
+        } else if (!displayFirstNumber && !secondNumber) {
+          operation.current = "";
+          setDisplayFirstNumber(true);
+        } else {
+          setSecondNumber("");
+          setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
+        }
+      } else {
+        setFirstNumber("");
+        setSecondNumber("");
+        setDisplayFirstNumber(true);
+      }
     } else if (operators.includes(value) && !operation.current) {
       operation.current = value;
       setDisplayFirstNumber(false);
