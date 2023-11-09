@@ -26,6 +26,7 @@ function App() {
 
   const editInput = (e) => {
     const value: string = e.target.value;
+    console.log(value);
     if (value === "AC" || value === "C") {
       if (value === "C") {
         if (displayFirstNumber) {
@@ -35,12 +36,13 @@ function App() {
           operation.current = "";
           setDisplayFirstNumber(true);
         } else {
-          setSecondNumber("");
+          setSecondNumber("0");
           setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
         }
       } else {
         setFirstNumber("");
         setSecondNumber("");
+        operation.current = "";
         setDisplayFirstNumber(true);
       }
     } else if (operators.includes(value) && !operation.current) {
