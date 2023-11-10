@@ -39,7 +39,7 @@ function App() {
           operation.current = "";
           setDisplayFirstNumber(true);
         } else {
-          // clears second number only
+          // Clears second number only
           setSecondNumber("0");
           setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
         }
@@ -70,6 +70,7 @@ function App() {
       // Handles equals operator by completing operation
       const op = operations.get(operation.current)!;
       setFirstNumber(op().toString());
+      setDisplayFirstNumber(true);
       setSecondNumber("");
       operation.current = "";
     } else if (!displayFirstNumber) {
