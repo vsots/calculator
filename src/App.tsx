@@ -56,6 +56,9 @@ function App() {
         // Adds operation if none in place
         operation.current = value;
         setDisplayFirstNumber(false);
+      } else if (operation.current && !secondNumber) {
+        // Changes operation if second number not input yet
+        operation.current = value;
       } else {
         // Completes previous operation if second number inputted
         const op = operations.get(operation.current)!;
