@@ -18,10 +18,22 @@ function App() {
   const operators: Array<string> = ["/", "x", "-", "+"];
 
   const operations: Map<string, () => number> = new Map([
-    ["/", () => parseFloat(firstNumber) / parseFloat(secondNumber)],
-    ["x", () => parseFloat(firstNumber) * parseFloat(secondNumber)],
-    ["+", () => parseFloat(firstNumber) + parseFloat(secondNumber)],
-    ["-", () => parseFloat(firstNumber) - parseFloat(secondNumber)],
+    [
+      "/",
+      () => (parseFloat(firstNumber) || 0) / (parseFloat(secondNumber) || 0),
+    ],
+    [
+      "x",
+      () => (parseFloat(firstNumber) || 0) * (parseFloat(secondNumber) || 0),
+    ],
+    [
+      "+",
+      () => (parseFloat(firstNumber) || 0) + (parseFloat(secondNumber) || 0),
+    ],
+    [
+      "-",
+      () => (parseFloat(firstNumber) || 0) - (parseFloat(secondNumber) || 0),
+    ],
   ]);
 
   const editInput = (e) => {
