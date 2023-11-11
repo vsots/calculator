@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import "./App.css";
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
 
   const [displayFirstNumber, setDisplayFirstNumber] = useState(true);
   const [firstNumber, setFirstNumber] = useState("");
-  const operation = useRef("");
+  const [operation, setOperation] = useState("");
   const [secondNumber, setSecondNumber] = useState("");
 
   const operators: Array<string> = ["/", "x", "-", "+"];
@@ -48,7 +48,7 @@ function App() {
           setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
         } else if (!displayFirstNumber && !secondNumber) {
           // Clears operation if second number not input yet
-          operation.current = "";
+          setOperation("");
           setDisplayFirstNumber(true);
         } else {
           // Clears second number only
@@ -59,32 +59,32 @@ function App() {
         // All Clear
         setFirstNumber("");
         setSecondNumber("");
-        operation.current = "";
+        setOperation("");
         setDisplayFirstNumber(true);
       }
     } else if (operators.includes(value)) {
       // Handles all operators excepts equals
-      if (!operation.current) {
+      if (!operation) {
         // Adds operation if none in place
-        operation.current = value;
+        setOperation(value);
         setDisplayFirstNumber(false);
-      } else if (operation.current && !secondNumber) {
+      } else if (operation && !secondNumber) {
         // Changes operation if second number not input yet
-        operation.current = value;
+        setOperation(value);
       } else {
         // Completes previous operation if second number inputted
-        const op = operations.get(operation.current)!;
+        const op = operations.get(operation)!;
         setFirstNumber(op().toString());
         setSecondNumber("");
-        operation.current = value;
+        setOperation(value);
       }
     } else if (value === "=") {
       // Handles equals operator by completing operation
-      const op = operations.get(operation.current)!;
+      const op = operations.get(operation)!;
       setFirstNumber(op().toString());
       setDisplayFirstNumber(true);
       setSecondNumber("");
-      operation.current = "";
+      setOperation("");
     } else if (!displayFirstNumber) {
       // Sets second number being inputted after firstNumber and operator added
       setSecondNumber(secondNumber + value);
