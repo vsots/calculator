@@ -42,8 +42,6 @@ function App() {
   ]);
 
   const editInput = (e) => {
-    console.log(e.target);
-    e.preventDefault();
     const value: string = e.target.value;
     if (value === "AC" || value === "C") {
       // Handles Clear and All Clear
@@ -68,6 +66,16 @@ function App() {
         setSecondNumber("");
         operation.current = "";
         setDisplayFirstNumber(true);
+      }
+    } else if (value === "+/-") {
+      if (displayFirstNumber) {
+        firstNumber[0] === "-"
+          ? setFirstNumber(firstNumber.substring(1))
+          : setFirstNumber("-" + firstNumber);
+      } else {
+        secondNumber[0] === "-"
+          ? setSecondNumber(secondNumber.substring(1))
+          : setSecondNumber("-" + secondNumber);
       }
     } else if (operators.includes(value)) {
       if (value === "+") {
