@@ -77,6 +77,12 @@ function App() {
           ? setSecondNumber(secondNumber.substring(1))
           : setSecondNumber("-" + secondNumber);
       }
+    } else if (value === "%") {
+      if (displayFirstNumber) {
+        setFirstNumber((parseFloat(firstNumber) / 100).toString());
+      } else {
+        setSecondNumber((parseFloat(secondNumber) / 100).toString());
+      }
     } else if (operators.includes(value)) {
       if (value === "+") {
         plus.current.style = {};
