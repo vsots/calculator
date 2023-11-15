@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 
 function App() {
   const [buttons, setButtons] = useState([
-    ["AC", "+/-", "%", "÷"],
+    ["AC", "+/-", "%", "/"],
     ["7", "8", "9", "x"],
     ["4", "5", "6", "-"],
     ["1", "2", "3", "+"],
@@ -12,7 +12,12 @@ function App() {
 
   const [displayFirstNumber, setDisplayFirstNumber] = useState(true);
   const [firstNumber, setFirstNumber] = useState("");
-  const [operation, setOperation] = useState("");
+  const operation = useRef("");
+  const plus = useRef(null);
+  const minus = useRef(null);
+  const multiply = useRef(null);
+  const divide = useRef(null);
+
   const [secondNumber, setSecondNumber] = useState("");
 
   const operators: Array<string> = ["/", "x", "-", "+"];
@@ -37,6 +42,8 @@ function App() {
   ]);
 
   const editInput = (e) => {
+    console.log(e.target);
+    e.preventDefault();
     const value: string = e.target.value;
     if (value === "AC" || value === "C") {
       // Handles Clear and All Clear
@@ -48,7 +55,7 @@ function App() {
           setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
         } else if (!displayFirstNumber && !secondNumber) {
           // Clears operation if second number not input yet
-          setOperation("");
+          operation.current = "";
           setDisplayFirstNumber(true);
         } else {
           // Clears second number only
@@ -59,32 +66,35 @@ function App() {
         // All Clear
         setFirstNumber("");
         setSecondNumber("");
-        setOperation("");
+        operation.current = "";
         setDisplayFirstNumber(true);
       }
     } else if (operators.includes(value)) {
+      if (value === "+") {
+        plus.current.style = {};
+      }
       // Handles all operators excepts equals
-      if (!operation) {
+      if (!operation.current) {
         // Adds operation if none in place
-        setOperation(value);
+        operation.current = value;
         setDisplayFirstNumber(false);
-      } else if (operation && !secondNumber) {
+      } else if (operation.current && !secondNumber) {
         // Changes operation if second number not input yet
-        setOperation(value);
+        operation.current = value;
       } else {
         // Completes previous operation if second number inputted
-        const op = operations.get(operation)!;
+        const op = operations.get(operation.current)!;
         setFirstNumber(op().toString());
         setSecondNumber("");
-        setOperation(value);
+        operation.current = value;
       }
     } else if (value === "=") {
       // Handles equals operator by completing operation
-      const op = operations.get(operation)!;
+      const op = operations.get(operation.current)!;
       setFirstNumber(op().toString());
       setDisplayFirstNumber(true);
       setSecondNumber("");
-      setOperation("");
+      operation.current = "";
     } else if (!displayFirstNumber) {
       // Sets second number being inputted after firstNumber and operator added
       setSecondNumber(secondNumber + value);
@@ -110,15 +120,29 @@ function App() {
       <div className="column">
         {buttons.map((row) => (
           <div className="row" key={row[1]}>
-            {row.map((button) => (
-              <button
-                key={button}
-                onClick={(e) => editInput(e)}
-                value={button === "÷" ? "/" : button}
-              >
-                {button}
-              </button>
-            ))}
+            {row.map((button) =>
+              button === "+" ? (
+                <button
+                  ref={plus}
+                  key={button}
+                  className=":active"
+                  style={{ outline: "none", userSelect: "none" }}
+                  onClick={(e) => editInput(e)}
+                  value={button}
+                >
+                  {button}
+                </button>
+              ) : (
+                <button
+                  key={button}
+                  style={{ outline: "none", userSelect: "none" }}
+                  onClick={(e) => editInput(e)}
+                  value={button}
+                >
+                  {button}
+                </button>
+              ),
+            )}
           </div>
         ))}
       </div>
