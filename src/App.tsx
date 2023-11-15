@@ -139,7 +139,6 @@ function App() {
                 <button
                   ref={plus}
                   key={button}
-                  className=":active"
                   style={{ outline: "none", userSelect: "none" }}
                   onClick={(e) => editInput(e)}
                   value={button}
