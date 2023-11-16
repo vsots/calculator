@@ -111,10 +111,14 @@ function App() {
       operation.current = "";
     } else if (!displayFirstNumber) {
       // Sets second number being inputted after firstNumber and operator added
-      setSecondNumber(secondNumber + value);
+      if (value !== "." || (value === "." && !secondNumber.includes("."))) {
+        setSecondNumber(secondNumber + value);
+      }
     } else {
       // Updates firstNumber when displayFirstNumber
-      setFirstNumber(firstNumber + value);
+      if (value !== "." || (value === "." && !firstNumber.includes("."))) {
+        setFirstNumber(firstNumber + value);
+      }
       if (buttons[0][0] === "AC") {
         // Updates All Clear to Clear as now there are values to the equation
         setButtons([["C", ...buttons[0].slice(1)], ...buttons.slice(1)]);
