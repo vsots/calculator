@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, MouseEvent } from "react";
 import "./App.css";
 
 function App() {
@@ -41,7 +41,8 @@ function App() {
     ],
   ]);
 
-  const editInput = (e) => {
+  const editInput = (e: MouseEvent<HTMLButtonElement>) => {
+    if (!(e.target instanceof HTMLButtonElement)) return;
     const value: string = e.target.value;
     if (value === "AC" || value === "C") {
       // Handles Clear and All Clear
@@ -144,7 +145,7 @@ function App() {
                   ref={plus}
                   key={button}
                   style={{ outline: "none", userSelect: "none" }}
-                  onClick={(e) => editInput(e)}
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
                   value={button}
                 >
                   {button}
@@ -153,7 +154,7 @@ function App() {
                 <button
                   key={button}
                   style={{ outline: "none", userSelect: "none" }}
-                  onClick={(e) => editInput(e)}
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
                   value={button}
                 >
                   {button}
