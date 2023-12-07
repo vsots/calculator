@@ -3,7 +3,7 @@
   grid-template-columns: repeat(8, 12.5vw);
   grid-template-rows: repeat(9, 5vh);
   grid-template-areas:
-    ". . input input input input . ."
+    ". . input  input  input  input  . ."
     ". . item00 item01 item02 item03 . ."
     ". . item10 item11 item12 item13 . ."
     ". . item20 item21 item22 item23 . ."
