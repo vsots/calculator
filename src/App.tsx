@@ -128,7 +128,7 @@ function App() {
   };
 
   return (
-    <>
+    <div className="calculator">
       <input
         type="text"
         value={
@@ -136,35 +136,36 @@ function App() {
         }
         readOnly={true}
       />
-      <div className="column">
-        {buttons.map((row) => (
-          <div className="row" key={row[1]}>
-            {row.map((button) =>
-              button === "+" ? (
-                <button
-                  ref={plus}
-                  key={button}
-                  style={{ outline: "none", userSelect: "none" }}
-                  onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
-                  value={button}
-                >
-                  {button}
-                </button>
-              ) : (
-                <button
-                  key={button}
-                  style={{ outline: "none", userSelect: "none" }}
-                  onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
-                  value={button}
-                >
-                  {button}
-                </button>
-              ),
-            )}
-          </div>
-        ))}
-      </div>
-    </>
+      {buttons.map((row, rowIdx) => {
+        return row.map((button, colIdx) => {
+          if (button === "+") {
+            return (
+              <button
+                ref={plus}
+                key={button}
+                className={`item-${rowIdx.toString()}${colIdx.toString()}`}
+                style={{ outline: "none", userSelect: "none" }}
+                onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
+                value={button}
+              >
+                {button}
+              </button>
+            );
+          }
+          return (
+            <button
+              key={button}
+              className={`item-${rowIdx.toString()}${colIdx.toString()}`}
+              style={{ outline: "none", userSelect: "none" }}
+              onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
+              value={button}
+            >
+              {button}
+            </button>
+          );
+        });
+      })}
+    </div>
   );
 }
 
