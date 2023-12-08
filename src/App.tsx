@@ -136,34 +136,26 @@ function App() {
         }
         readOnly={true}
       />
-      {buttons.map((row, rowIdx) => {
-        return row.map((button, colIdx) => {
-          if (button === "+") {
-            return (
-              <button
-                ref={plus}
-                key={button}
-                className={`item-${rowIdx.toString()}${colIdx.toString()}`}
-                style={{ outline: "none", userSelect: "none" }}
-                onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
-                value={button}
-              >
-                {button}
-              </button>
-            );
-          }
-          return (
-            <button
-              key={button}
-              className={`item-${rowIdx.toString()}${colIdx.toString()}`}
-              style={{ outline: "none", userSelect: "none" }}
-              onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
-              value={button}
-            >
-              {button}
-            </button>
-          );
-        });
+      {buttons.map((row) => {
+        return (
+          <div className="row">
+            {row.map((button) => {
+              return (
+                <button
+                  ref={button === "+" ? plus : undefined}
+                  key={button}
+                  className="item"
+                  id={button === "0" ? "button-zero" : undefined}
+                  style={{ outline: "none", userSelect: "none" }}
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
+                  value={button}
+                >
+                  {button}
+                </button>
+              );
+            })}
+          </div>
+        );
       })}
     </div>
   );

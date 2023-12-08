@@ -4,93 +4,18 @@
   display: grid;
   width: 25%;
   justify-content: center;
-  grid-template-columns: repeat(4, 6.25vw);
+  grid-template-columns: 25vw;
   grid-template-rows: repeat(6, 5vh);
-  grid-template-areas:
-    "input  input  input  input"
-    "item00 item01 item02 item03"
-    "item10 item11 item12 item13"
-    "item20 item21 item22 item23"
-    "item30 item31 item32 item33"
-    "item40 item40 item41 item42";
 }
 
-input {
-  grid-area: input;
+.row {
+  display: flex;
 }
 
-.item-00 {
-  grid-area: item00;
+.item {
+  width: 6.25vw;
 }
 
-.item-01 {
-  grid-area: item01;
-}
-
-.item-02 {
-  grid-area: item02;
-}
-
-.item-03 {
-  grid-area: item03;
-}
-
-.item-10 {
-  grid-area: item10;
-}
-
-.item-11 {
-  grid-area: item11;
-}
-
-.item-12 {
-  grid-area: item12;
-}
-
-.item-13 {
-  grid-area: item13;
-}
-
-.item-20 {
-  grid-area: item20;
-}
-
-.item-21 {
-  grid-area: item21;
-}
-
-.item-22 {
-  grid-area: item22;
-}
-
-.item-23 {
-  grid-area: item23;
-}
-
-.item-30 {
-  grid-area: item30;
-}
-
-.item-31 {
-  grid-area: item31;
-}
-
-.item-32 {
-  grid-area: item32;
-}
-
-.item-33 {
-  grid-area: item33;
-}
-
-.item-40 {
-  grid-area: item40;
-}
-
-.item-41 {
-  grid-area: item41;
-}
-
-.item-42 {
-  grid-area: item42;
+#button-zero {
+  width: 12.5vw;
 }
