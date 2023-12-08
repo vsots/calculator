@@ -8,6 +8,10 @@
   grid-template-rows: repeat(6, 5vh);
 }
 
+input {
+  text-align: right;
+}
+
 .row {
   display: flex;
 }
