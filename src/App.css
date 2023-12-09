@@ -11,12 +11,9 @@ input {
   text-align: right;
 }
 
-.row {
-  display: flex;
-}
-
 .item {
   width: 6.25vw;
+  height: 5vh;
 }
 
 #button-zero {
