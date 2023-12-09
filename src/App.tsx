@@ -18,6 +18,13 @@ function App() {
   const multiply = useRef(null);
   const divide = useRef(null);
 
+  const operatorRefs: Map<string, React.MutableRefObject<null>> = new Map([
+    ["+", plus],
+    ["-", minus],
+    ["x", multiply],
+    ["/", divide],
+  ]);
+
   const [secondNumber, setSecondNumber] = useState("");
 
   const operators: Array<string> = ["/", "x", "-", "+"];
@@ -46,6 +53,9 @@ function App() {
     const value: string = e.target.value;
     if (value === "AC" || value === "C") {
       // Handles Clear and All Clear
+      // Removes active operator style
+      if (operation.current)
+        operatorRefs.get(operation.current)!.current.style.border = "";
       if (value === "C") {
         // Handles Clear case
         if (displayFirstNumber) {
@@ -57,6 +67,7 @@ function App() {
           operation.current = "";
           setDisplayFirstNumber(true);
         } else {
+          operatorRefs.forEach((node) => (node.current.style.border = ""));
           // Clears second number only
           setSecondNumber("0");
           setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
@@ -85,9 +96,9 @@ function App() {
         setSecondNumber((parseFloat(secondNumber) / 100).toString());
       }
     } else if (operators.includes(value)) {
-      if (value === "+") {
-        plus.current.style = {};
-      }
+      // Reverts old operator to inactive styles
+      if (operation.current)
+        operatorRefs.get(operation.current)!.current.style.border = "";
       // Handles all operators excepts equals
       if (!operation.current) {
         // Adds operation if none in place
@@ -103,7 +114,12 @@ function App() {
         setSecondNumber("");
         operation.current = value;
       }
+      // Adds border to clicked operator to show operation
+      operatorRefs.get(value)!.current.style.border = "0.2rem solid black";
     } else if (value === "=") {
+      if (operation.current)
+        operatorRefs.get(operation.current)!.current.style.border = "";
+
       // Handles equals operator by completing operation
       const op = operations.get(operation.current)!;
       setFirstNumber(op().toString());
@@ -142,11 +158,14 @@ function App() {
             {row.map((button) => {
               return (
                 <button
-                  ref={button === "+" ? plus : undefined}
+                  ref={
+                    operatorRefs.has(button)
+                      ? operatorRefs.get(button)!
+                      : undefined
+                  }
                   key={button}
                   className="item"
                   id={button === "0" ? "button-zero" : undefined}
-                  style={{ outline: "none", userSelect: "none" }}
                   onClick={(e: MouseEvent<HTMLButtonElement>) => editInput(e)}
                   value={button}
                 >
