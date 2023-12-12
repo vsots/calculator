@@ -32,19 +32,27 @@ function App() {
   const operations: Map<string, () => number> = new Map([
     [
       "/",
-      () => (parseFloat(firstNumber) || 0) / (parseFloat(secondNumber) || 0),
+      () =>
+        parseFloat(firstNumber || "0") /
+        parseFloat(secondNumber || firstNumber || "0"),
     ],
     [
       "x",
-      () => (parseFloat(firstNumber) || 0) * (parseFloat(secondNumber) || 0),
+      () =>
+        parseFloat(firstNumber || "0") *
+        parseFloat(secondNumber || firstNumber || "0"),
     ],
     [
       "+",
-      () => (parseFloat(firstNumber) || 0) + (parseFloat(secondNumber) || 0),
+      () =>
+        parseFloat(firstNumber || "0") +
+        parseFloat(secondNumber || firstNumber || "0"),
     ],
     [
       "-",
-      () => (parseFloat(firstNumber) || 0) - (parseFloat(secondNumber) || 0),
+      () =>
+        parseFloat(firstNumber || "0") -
+        parseFloat(secondNumber || firstNumber || "0"),
     ],
   ]);
 
@@ -160,16 +168,17 @@ function App() {
 
   /**
    * Handles equals (=) input
-   * Completes the operation of firstNumber, operation.current, and secondNumber selected. The result is set as firstNumber. User is now editting firstNumber.
+   * Completes the operation of firstNumber, operation.current, and secondNumber selected (if any). The result is set as firstNumber. User is now editting firstNumber.
    */
   const equalsInput = () => {
-    if (operation.current)
+    if (operation.current) {
       operatorRefs.get(operation.current)!.current.style.border = "";
-    const op = operations.get(operation.current)!;
-    setFirstNumber(op().toString());
-    setDisplayFirstNumber(true);
-    setSecondNumber("");
-    operation.current = "";
+      const op = operations.get(operation.current)!;
+      setFirstNumber(op().toString());
+      setDisplayFirstNumber(true);
+      setSecondNumber("");
+      operation.current = "";
+    }
   };
 
   /**
