@@ -48,98 +48,145 @@ function App() {
     ],
   ]);
 
+  /**
+   * Handles button input events and appropriately directs to a given function depending on the button's value.
+   *
+   * @param e - Button input event
+   */
   const editInput = (e: MouseEvent<HTMLButtonElement>) => {
     if (!(e.target instanceof HTMLButtonElement)) return;
     const value: string = e.target.value;
-    if (value === "AC" || value === "C") {
-      // Handles Clear and All Clear
-      // Removes active operator style
-      if (operation.current)
+    if (value === "AC" || value === "C") clearAllClearInput(value);
+    else if (value === "+/-") plusMinusInput();
+    else if (value === "%") percentInput();
+    else if (operators.includes(value)) setOperator(value);
+    else if (value === "=") equalsInput();
+    else integerAndDecimalInput(value);
+  };
+
+  /**
+   * Handles clear (C) and all clear (AC) button input.
+   * If "C", there are three possible cases to handle
+   *    1. The user has not committed any operation, or they completed an operation already. This means firstNumber is the active value being inputted.
+   *       In this case, the firstNumber is set to empty string.
+   *    2. The user has committed an operation, but has not inputted the secondNumber.
+   *       In this case, the active operation styles are removed, the operation is set to empty string, and the user returns to editting firstNumber.
+   *    3. The user has committed a firstNumber, an operation, and has inputted a secondNumber, but has not completed the operation.
+   *       In this case, the secondNumber is set to "0". The firstNumber and operation values remain the same as their previous state.
+   *       The user is still editting secondNumber.
+   *
+   *    In all three cases, the user the button containing the value "C" gets switched to "AC".
+   *
+   * If "AC", the operation, operation active styles, firstNumber, and secondNumber get set to empty string.
+   *
+   * @param value - String "C" or "AC".
+   */
+  const clearAllClearInput = (value: string) => {
+    if (value === "C") {
+      if (displayFirstNumber) setFirstNumber("");
+      else if (operation.current && !secondNumber) {
         operatorRefs.get(operation.current)!.current.style.border = "";
-      if (value === "C") {
-        // Handles Clear case
-        if (displayFirstNumber) {
-          // Clears first number if first number being inputted not completed
-          setFirstNumber("");
-          setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
-        } else if (!displayFirstNumber && !secondNumber) {
-          // Clears operation if second number not input yet
-          operation.current = "";
-          setDisplayFirstNumber(true);
-        } else {
-          operatorRefs.forEach((node) => (node.current.style.border = ""));
-          // Clears second number only
-          setSecondNumber("0");
-          setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
-        }
-      } else {
-        // All Clear
-        setFirstNumber("");
-        setSecondNumber("");
         operation.current = "";
         setDisplayFirstNumber(true);
-      }
-    } else if (value === "+/-") {
-      if (displayFirstNumber) {
-        firstNumber[0] === "-"
-          ? setFirstNumber(firstNumber.substring(1))
-          : setFirstNumber("-" + firstNumber);
-      } else {
-        secondNumber[0] === "-"
-          ? setSecondNumber(secondNumber.substring(1))
-          : setSecondNumber("-" + secondNumber);
-      }
-    } else if (value === "%") {
-      if (displayFirstNumber) {
-        setFirstNumber((parseFloat(firstNumber) / 100).toString());
-      } else {
-        setSecondNumber((parseFloat(secondNumber) / 100).toString());
-      }
-    } else if (operators.includes(value)) {
-      // Reverts old operator to inactive styles
-      if (operation.current)
-        operatorRefs.get(operation.current)!.current.style.border = "";
-      // Handles all operators excepts equals
-      if (!operation.current) {
-        // Adds operation if none in place
-        operation.current = value;
-        setDisplayFirstNumber(false);
-      } else if (operation.current && !secondNumber) {
-        // Changes operation if second number not input yet
-        operation.current = value;
-      } else {
-        // Completes previous operation if second number inputted
-        const op = operations.get(operation.current)!;
-        setFirstNumber(op().toString());
-        setSecondNumber("");
-        operation.current = value;
-      }
-      // Adds border to clicked operator to show operation
-      operatorRefs.get(value)!.current.style.border = "0.2rem solid black";
-    } else if (value === "=") {
-      if (operation.current)
-        operatorRefs.get(operation.current)!.current.style.border = "";
+      } else setSecondNumber("0");
 
-      // Handles equals operator by completing operation
-      const op = operations.get(operation.current)!;
-      setFirstNumber(op().toString());
-      setDisplayFirstNumber(true);
+      setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
+    } else {
+      if (operation.current)
+        operatorRefs.get(operation.current)!.current.style.border = "";
+      setFirstNumber("");
       setSecondNumber("");
       operation.current = "";
-    } else if (!displayFirstNumber) {
-      // Sets second number being inputted after firstNumber and operator added
-      if (value !== "." || (value === "." && !secondNumber.includes("."))) {
-        setSecondNumber(secondNumber + value);
-      }
+      setDisplayFirstNumber(true);
+    }
+  };
+
+  /**
+   * Handles the negation (+/-) button input.
+   * If firstNumber is active, it gets negated. Otherwise, secondNumber gets negated.
+   */
+  const plusMinusInput = () => {
+    if (displayFirstNumber) {
+      firstNumber[0] === "-"
+        ? setFirstNumber(firstNumber.substring(1))
+        : setFirstNumber("-" + firstNumber);
     } else {
-      // Updates firstNumber when displayFirstNumber
-      if (value !== "." || (value === "." && !firstNumber.includes("."))) {
-        setFirstNumber(firstNumber + value);
-      }
-      if (buttons[0][0] === "AC") {
-        // Updates All Clear to Clear as now there are values to the equation
-        setButtons([["C", ...buttons[0].slice(1)], ...buttons.slice(1)]);
-      }
+      secondNumber[0] === "-"
+        ? setSecondNumber(secondNumber.substring(1))
+        : setSecondNumber("-" + secondNumber);
+    }
+  };
+
+  /**
+   * Handles the percent (%) button input.
+   * If firstNumber is active, it is set as a percent in decimal form. Otherwise, secondNumber is set a percent in decimal form.
+   */
+  const percentInput = () => {
+    if (displayFirstNumber) {
+      setFirstNumber((parseFloat(firstNumber) / 100).toString());
+    } else {
+      setSecondNumber((parseFloat(secondNumber) / 100).toString());
+    }
+  };
+
+  /**
+   * Handles button input that is in operators array (["/", "x", "-", "+"]).
+   * There are two cases to handle for the operator input:
+   *
+   * In both cases, the active styles for the current operation (if one has been selected are removed)
+   *    1. No operation is currently selected or a new operation value is being selected with secondNumber not being inputted.
+   *       In this case, the operation selected is saved or overrides the previous operation and the user will now input secondNumber
+   *    2. secondNumber has already been inputted.
+   *       In this case, the previous operation gets completed with the result being set to firstNumber. The operation selected is saved and the user will now input secondNumber.
+   *
+   * @param value - String that is in operators array (["/", "x", "-", "+"]).
+   */
+  const setOperator = (value: string) => {
+    if (operation.current)
+      operatorRefs.get(operation.current)!.current.style.border = "";
+
+    if (!operation.current || (operation.current && !secondNumber)) {
+      operation.current = value;
+      setDisplayFirstNumber(false);
+    } else {
+      const op = operations.get(operation.current)!;
+      setFirstNumber(op().toString());
+      setSecondNumber("");
+      operation.current = value;
+    }
+
+    operatorRefs.get(value)!.current.style.border = "0.2rem solid black";
+  };
+
+  /**
+   * Handles equals (=) input
+   * Completes the operation of firstNumber, operation.current, and secondNumber selected. The result is set as firstNumber. User is now editting firstNumber.
+   */
+  const equalsInput = () => {
+    if (operation.current)
+      operatorRefs.get(operation.current)!.current.style.border = "";
+    const op = operations.get(operation.current)!;
+    setFirstNumber(op().toString());
+    setDisplayFirstNumber(true);
+    setSecondNumber("");
+    operation.current = "";
+  };
+
+  /**
+   * Handles integer (0-9) and decimal (.) input
+   * Sets firstNumber or secondNumber depending on which one is currently being displayed. Ensures decimal is only added once.
+   * If "AC" was being displayed, the value is changed to "C".
+   *
+   * @param value - string that is decimal or integer
+   */
+  const integerAndDecimalInput = (value: string) => {
+    if (value !== "." || (value === "." && !firstNumber.includes("."))) {
+      displayFirstNumber
+        ? setFirstNumber(firstNumber + value)
+        : setSecondNumber(secondNumber + value);
+    }
+    if (buttons[0][0] === "AC") {
+      setButtons([["C", ...buttons[0].slice(1)], ...buttons.slice(1)]);
     }
   };
 
