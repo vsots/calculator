@@ -1,4 +1,4 @@
-import { useState, useRef, MouseEvent } from "react";
+import { useState, useRef, MouseEvent, useEffect } from "react";
 import "./App.css";
 
 function App() {
@@ -187,15 +187,28 @@ function App() {
   /**
    * Handles integer (0-9) and decimal (.) input
    * Sets firstNumber or secondNumber depending on which one is currently being displayed. Ensures decimal is only added once.
+   * Errant zeros (i.e. 00000006) are ensured to be removed by parsing the string to a float first and then converting it back to a string.
    * If "AC" was being displayed, the value and text are changed to "C".
    *
    * @param value - string that is decimal or integer
    */
   const integerAndDecimalInput = (value: string) => {
-    if (value !== "." || (value === "." && !firstNumber.includes("."))) {
+    if (
+      value !== "." ||
+      (value === "." && !firstNumber.includes(".")) ||
+      (value === "." && !secondNumber.includes("."))
+    ) {
       displayFirstNumber
-        ? setFirstNumber(firstNumber + value)
-        : setSecondNumber(secondNumber + value);
+        ? setFirstNumber(
+            value === "."
+              ? (firstNumber || "0") + value
+              : parseFloat(firstNumber + value).toString(),
+          )
+        : setSecondNumber(
+            value === "."
+              ? (secondNumber || "0") + value
+              : parseFloat(secondNumber + value).toString(),
+          );
     }
     if (clear.current.value === "AC") {
       clear.current.value = "C";
