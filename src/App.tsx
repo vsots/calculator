@@ -2,23 +2,25 @@ import { useState, useRef, MouseEvent } from "react";
 import "./App.css";
 
 function App() {
-  const [buttons, setButtons] = useState([
+  const buttons = [
     ["AC", "+/-", "%", "/"],
     ["7", "8", "9", "x"],
     ["4", "5", "6", "-"],
     ["1", "2", "3", "+"],
     ["0", ".", "="],
-  ]);
+  ];
 
   const [displayFirstNumber, setDisplayFirstNumber] = useState(true);
   const [firstNumber, setFirstNumber] = useState("");
   const operation = useRef("");
+  const clear = useRef(null);
   const plus = useRef(null);
   const minus = useRef(null);
   const multiply = useRef(null);
   const divide = useRef(null);
 
-  const operatorRefs: Map<string, React.MutableRefObject<null>> = new Map([
+  const inputRefs: Map<string, React.MutableRefObject<null>> = new Map([
+    ["AC", clear],
     ["+", plus],
     ["-", minus],
     ["x", multiply],
@@ -93,15 +95,16 @@ function App() {
     if (value === "C") {
       if (displayFirstNumber) setFirstNumber("");
       else if (operation.current && !secondNumber) {
-        operatorRefs.get(operation.current)!.current.style.border = "";
+        inputRefs.get(operation.current)!.current.style.border = "";
         operation.current = "";
         setDisplayFirstNumber(true);
       } else setSecondNumber("0");
 
-      setButtons([["AC", ...buttons[0].slice(1)], ...buttons.slice(1)]);
+      clear.current.value = "AC";
+      clear.current.innerText = "AC";
     } else {
       if (operation.current)
-        operatorRefs.get(operation.current)!.current.style.border = "";
+        inputRefs.get(operation.current)!.current.style.border = "";
       setFirstNumber("");
       setSecondNumber("");
       operation.current = "";
@@ -151,7 +154,7 @@ function App() {
    */
   const setOperator = (value: string) => {
     if (operation.current)
-      operatorRefs.get(operation.current)!.current.style.border = "";
+      inputRefs.get(operation.current)!.current.style.border = "";
 
     if (!operation.current || (operation.current && !secondNumber)) {
       operation.current = value;
@@ -163,7 +166,7 @@ function App() {
       operation.current = value;
     }
 
-    operatorRefs.get(value)!.current.style.border = "0.2rem solid black";
+    inputRefs.get(value)!.current.style.border = "0.2rem solid black";
   };
 
   /**
@@ -172,7 +175,7 @@ function App() {
    */
   const equalsInput = () => {
     if (operation.current) {
-      operatorRefs.get(operation.current)!.current.style.border = "";
+      inputRefs.get(operation.current)!.current.style.border = "";
       const op = operations.get(operation.current)!;
       setFirstNumber(op().toString());
       setDisplayFirstNumber(true);
@@ -184,7 +187,7 @@ function App() {
   /**
    * Handles integer (0-9) and decimal (.) input
    * Sets firstNumber or secondNumber depending on which one is currently being displayed. Ensures decimal is only added once.
-   * If "AC" was being displayed, the value is changed to "C".
+   * If "AC" was being displayed, the value and text are changed to "C".
    *
    * @param value - string that is decimal or integer
    */
@@ -194,8 +197,9 @@ function App() {
         ? setFirstNumber(firstNumber + value)
         : setSecondNumber(secondNumber + value);
     }
-    if (buttons[0][0] === "AC") {
-      setButtons([["C", ...buttons[0].slice(1)], ...buttons.slice(1)]);
+    if (clear.current.value === "AC") {
+      clear.current.value = "C";
+      clear.current.innerText = "C";
     }
   };
 
@@ -215,9 +219,7 @@ function App() {
               return (
                 <button
                   ref={
-                    operatorRefs.has(button)
-                      ? operatorRefs.get(button)!
-                      : undefined
+                    inputRefs.has(button) ? inputRefs.get(button)! : undefined
                   }
                   key={button}
                   className="item"
