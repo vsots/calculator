@@ -1,4 +1,4 @@
-import { useState, useRef, MouseEvent, useEffect } from "react";
+import { useState, useRef, MouseEvent } from "react";
 import "./App.css";
 
 function App() {
