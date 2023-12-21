@@ -19,3 +19,12 @@ input {
 #button-zero {
   width: 12.5vw;
 }
+
+.links {
+  text-align: center;
+  padding: 1rem;
+}
+
+.link-item {
+  padding: 1rem;
+}
