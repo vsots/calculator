@@ -1,3 +1,6 @@
 .grid {
-  width: 100%;
+  position: relative;
+  width: 65vw;
+  height: 88vh;
+  left: 16.2vw;
 }
