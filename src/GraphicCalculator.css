@@ -1,6 +1,10 @@
+.row {
+  display: grid;
+  grid-template-columns: 25vw 75vw;
+}
+
 .grid {
   position: relative;
   width: 65vw;
   height: 88vh;
-  left: 16.2vw;
 }

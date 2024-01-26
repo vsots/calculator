@@ -1,7 +1,11 @@
-import { useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import FunctionInput from "./FunctionInput";
 import "./GraphicCalculator.css";
 
 function GraphicCalculator() {
+  const [equation, setEquation]: (string | Dispatch<SetStateAction<string>>)[] =
+    useState("x");
+
   type Direction = "up" | "down" | "left" | "right";
 
   const createAxis = (
@@ -69,6 +73,7 @@ function GraphicCalculator() {
   };
 
   useEffect(() => {
+    console.log(equation);
     const canvas: HTMLCanvasElement = document.querySelector(".grid")!;
     const graph: CanvasRenderingContext2D = canvas.getContext("2d")!;
     canvas.width = 445;
@@ -91,7 +96,12 @@ function GraphicCalculator() {
     createGrid(graph, "right", x, y, width, height);
   });
 
-  return <canvas className="grid" />;
+  return (
+    <div className="row">
+      <FunctionInput equation={equation} setEquation={setEquation} />
+      <canvas className="grid" />
+    </div>
+  );
 }
 
 export default GraphicCalculator;
