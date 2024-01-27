@@ -1,4 +1,4 @@
-.row {
+.graph-calc {
   display: grid;
   grid-template-columns: 25vw 75vw;
 }

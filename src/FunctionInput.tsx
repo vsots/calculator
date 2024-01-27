@@ -10,14 +10,21 @@ function FunctionInput({
 }) {
   const runEquation = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const inputBox: HTMLInputElement = e.currentTarget[0] as HTMLInputElement;
+    const inputBox: HTMLInputElement = e.currentTarget[1] as HTMLInputElement;
     setEquation(inputBox.value);
   };
 
   return (
-    <form onSubmit={(e) => runEquation(e)}>
-      <button type="submit">Submit</button>
-      <input type="text" readOnly={false} placeholder={equation} />
+    <form id="function-form" onSubmit={(e) => runEquation(e)}>
+      <button id="function-button" type="submit">
+        Submit
+      </button>
+      <input
+        id="function-input"
+        type="text"
+        readOnly={false}
+        placeholder={equation}
+      />
     </form>
   );
 }

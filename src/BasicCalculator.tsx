@@ -1,6 +1,6 @@
 import { useState, useRef, MouseEvent } from "react";
 
-import "./App.css";
+import "./BasicCalculator.css";
 
 function BasicCalculator() {
   const buttons = [
@@ -226,9 +226,9 @@ function BasicCalculator() {
         }
         readOnly={true}
       />
-      {buttons.map((row) => {
+      {buttons.map((row, rowIdx) => {
         return (
-          <div className="row">
+          <div className="row" key={rowIdx.toString()}>
             {row.map((button) => {
               return (
                 <button
