@@ -1,25 +1,3 @@
-.calculator {
-  position: relative;
-  left: 37%;
-  display: grid;
-  width: 25%;
-  grid-template-columns: 25vw;
-  grid-template-rows: repeat(6, 5vh);
-}
-
-input {
-  text-align: right;
-}
-
-.item {
-  width: 6.25vw;
-  height: 5vh;
-}
-
-#button-zero {
-  width: 12.5vw;
-}
-
 .links {
   text-align: center;
   padding: 1rem;

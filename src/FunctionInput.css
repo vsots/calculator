@@ -4,13 +4,13 @@ form {
   align-items: center;
 }
 
-button {
+#function-button {
   width: 35%;
   padding-top: 1vh;
   padding-bottom: 1vh;
 }
 
-input {
+#function-input {
   width: 75%;
   padding: 2%;
   margin-top: 2vh;
