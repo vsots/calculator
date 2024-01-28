@@ -118,8 +118,16 @@ function GraphicCalculator() {
   useEffect(() => {
     const canvas: HTMLCanvasElement = document.querySelector(".grid")!;
     const graph: CanvasRenderingContext2D = canvas.getContext("2d")!;
-    canvas.width = 445;
-    canvas.height = 365;
+    const { innerWidth, innerHeight } = window;
+    const responsiveWidth = Math.round(0.315 * innerWidth);
+    const responsiveHeight = Math.round(0.456 * innerHeight);
+
+    responsiveWidth % 2 === 0
+      ? (canvas.width = responsiveWidth + 1)
+      : (canvas.width = responsiveWidth);
+    responsiveHeight % 2 === 0
+      ? (canvas.height = responsiveHeight + 1)
+      : (canvas.height = responsiveHeight);
 
     const { width, height } = canvas;
     const x = width / 2;
