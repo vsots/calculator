@@ -15,7 +15,7 @@ function FunctionInput({
   };
 
   return (
-    <form id="function-form" onSubmit={(e) => runEquation(e)}>
+    <form onSubmit={(e) => runEquation(e)}>
       <button id="function-button" type="submit">
         Submit
       </button>
