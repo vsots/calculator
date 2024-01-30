@@ -8,6 +8,25 @@ function GraphicCalculator() {
 
   type Direction = "up" | "down" | "left" | "right";
 
+  const calculateGridSpacing = (width: number, height: number): number => {
+    const size = Math.max(width, height);
+    let gridSpacing = 0.025;
+
+    const breakpoints = [
+      0.05, 0.1, 0.25, 0.5, 1, 2, 5, 10, 20, 40, 50, 75, 100, 150, 200, 250,
+      300, 400, 500, 1000, 2500, 10000, 25000, 50000, 100000,
+    ];
+
+    let i = 0;
+    while (breakpoints[i] && breakpoints[i] < size / 20) {
+      // ensures at least 20 grid cells on the major axis
+      gridSpacing = breakpoints[i];
+      i++;
+    }
+
+    return gridSpacing;
+  };
+
   const createAxis = (
     graph: CanvasRenderingContext2D,
     toChange: { x: number } | { y: number },
@@ -32,13 +51,13 @@ function GraphicCalculator() {
 
   const createGrid = (
     graph: CanvasRenderingContext2D,
+    gridSpacing: number,
     direction: Direction,
     x: number,
     y: number,
     width: number,
     height: number,
   ) => {
-    const gridSpacing = 15;
     let index = 0;
     let currentLine = direction === "up" || direction === "down" ? y : x;
 
@@ -109,6 +128,7 @@ function GraphicCalculator() {
     graph.beginPath();
     graph.moveTo(data[0][0], data[0][1]);
     graph.strokeStyle = "rgba(0, 90, 230)";
+    graph.lineWidth = 1;
 
     data.forEach(([x, y]) => graph.lineTo(x, y));
 
@@ -119,8 +139,8 @@ function GraphicCalculator() {
     const canvas: HTMLCanvasElement = document.querySelector(".grid")!;
     const graph: CanvasRenderingContext2D = canvas.getContext("2d")!;
     const { innerWidth, innerHeight } = window;
-    const responsiveWidth = Math.round(0.315 * innerWidth);
-    const responsiveHeight = Math.round(0.456 * innerHeight);
+    const responsiveWidth = Math.round(0.24 * innerWidth);
+    const responsiveHeight = Math.round(0.36 * innerHeight);
 
     responsiveWidth % 2 === 0
       ? (canvas.width = responsiveWidth + 1)
@@ -140,10 +160,12 @@ function GraphicCalculator() {
     createAxis(graph, { y: height }, x, y);
     createAxis(graph, { y: 0 }, x, y);
 
-    createGrid(graph, "up", x, y, width, height);
-    createGrid(graph, "down", x, y, width, height);
-    createGrid(graph, "left", x, y, width, height);
-    createGrid(graph, "right", x, y, width, height);
+    const gridSpacing = calculateGridSpacing(width, height);
+
+    createGrid(graph, gridSpacing, "up", x, y, width, height);
+    createGrid(graph, gridSpacing, "down", x, y, width, height);
+    createGrid(graph, gridSpacing, "left", x, y, width, height);
+    createGrid(graph, gridSpacing, "right", x, y, width, height);
 
     const data: [number, number][] = [];
 
