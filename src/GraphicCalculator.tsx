@@ -18,8 +18,8 @@ function GraphicCalculator() {
     ];
 
     let i = 0;
-    while (breakpoints[i] && breakpoints[i] < size / 20) {
-      // ensures at least 20 grid cells on the major axis
+    while (breakpoints[i] && breakpoints[i] < size / 4) {
+      // ensures at least 4 grid cells on the major axis
       gridSpacing = breakpoints[i];
       i++;
     }
@@ -59,6 +59,7 @@ function GraphicCalculator() {
     height: number,
   ) => {
     let index = 0;
+    let label = 0;
     let currentLine = direction === "up" || direction === "down" ? y : x;
 
     const drawOrNot = (line: number): boolean => {
@@ -86,11 +87,27 @@ function GraphicCalculator() {
         graph.stroke();
       }
 
-      index++;
+      if (label !== 0 && index % 5 === 0) {
+        if (direction === "down" || direction === "up") {
+          graph.fillStyle = "black";
+          graph.fillText(label.toString(), x + 3, currentLine - 3);
+        } else {
+          graph.fillStyle = "black";
+          graph.fillText(label.toString(), currentLine + 2, y + 10);
+        }
+      }
+
+      if (index % 5 === 0)
+        label +=
+          direction === "right" || direction === "up"
+            ? gridSpacing
+            : -gridSpacing;
 
       if (direction === "up" || direction === "left")
-        currentLine -= gridSpacing;
-      else currentLine += gridSpacing;
+        currentLine -= gridSpacing / 5;
+      else currentLine += gridSpacing / 5;
+
+      index++;
 
       draw = drawOrNot(currentLine);
     }
@@ -139,8 +156,8 @@ function GraphicCalculator() {
     const canvas: HTMLCanvasElement = document.querySelector(".grid")!;
     const graph: CanvasRenderingContext2D = canvas.getContext("2d")!;
     const { innerWidth, innerHeight } = window;
-    const responsiveWidth = Math.round(0.24 * innerWidth);
-    const responsiveHeight = Math.round(0.36 * innerHeight);
+    const responsiveWidth = Math.round(0.5 * innerWidth);
+    const responsiveHeight = Math.round(0.65 * innerHeight);
 
     responsiveWidth % 2 === 0
       ? (canvas.width = responsiveWidth + 1)
