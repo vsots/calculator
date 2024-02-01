@@ -1,15 +1,40 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import FunctionInput from "./FunctionInput";
 import "./GraphicCalculator.css";
 
 function GraphicCalculator() {
   const [equation, setEquation]: (string | Dispatch<SetStateAction<string>>)[] =
     useState("x");
+  const x: React.MutableRefObject<number> = useRef(0);
+  const y: React.MutableRefObject<number> = useRef(0);
+  const zoom: React.MutableRefObject<number> = useRef(1);
+  const canvasElem: React.MutableRefObject<HTMLCanvasElement | null> =
+    useRef(null);
 
   type Direction = "up" | "down" | "left" | "right";
 
+  const createAxis = (
+    graph: CanvasRenderingContext2D,
+    toChange: { x: number } | { y: number },
+  ) => {
+    function isX(obj: { x: number } | { y: number }): obj is { x: number } {
+      return (obj as { x: number }).x !== undefined;
+    }
+
+    graph.strokeStyle = "#000";
+    graph.lineWidth = 3;
+
+    graph.beginPath();
+    graph.moveTo(x.current, y.current);
+    graph.lineTo(
+      isX(toChange) ? toChange.x : x.current,
+      isX(toChange) ? y.current : toChange.y,
+    );
+    graph.stroke();
+  };
+
   const calculateGridSpacing = (width: number, height: number): number => {
-    const size = Math.max(width, height);
+    const size = Math.max(width, height) / zoom.current;
     let gridSpacing = 0.025;
 
     const breakpoints = [
@@ -27,40 +52,17 @@ function GraphicCalculator() {
     return gridSpacing;
   };
 
-  const createAxis = (
-    graph: CanvasRenderingContext2D,
-    toChange: { x: number } | { y: number },
-    x: number,
-    y: number,
-  ) => {
-    function isX(obj: { x: number } | { y: number }): obj is { x: number } {
-      return (obj as { x: number }).x !== undefined;
-    }
-
-    graph.strokeStyle = "#000";
-    graph.lineWidth = 3;
-
-    graph.beginPath();
-    graph.moveTo(x, y);
-    graph.lineTo(
-      isX(toChange) ? toChange.x : x,
-      isX(toChange) ? y : toChange.y,
-    );
-    graph.stroke();
-  };
-
   const createGrid = (
     graph: CanvasRenderingContext2D,
     gridSpacing: number,
     direction: Direction,
-    x: number,
-    y: number,
     width: number,
     height: number,
   ) => {
     let index = 0;
     let label = 0;
-    let currentLine = direction === "up" || direction === "down" ? y : x;
+    let currentLine =
+      direction === "up" || direction === "down" ? y.current : x.current;
 
     const drawOrNot = (line: number): boolean => {
       if (direction === "up") return line > 0;
@@ -90,10 +92,10 @@ function GraphicCalculator() {
       if (label !== 0 && index % 5 === 0) {
         if (direction === "down" || direction === "up") {
           graph.fillStyle = "black";
-          graph.fillText(label.toString(), x + 3, currentLine - 3);
+          graph.fillText(label.toString(), x.current + 3, currentLine - 3);
         } else {
           graph.fillStyle = "black";
-          graph.fillText(label.toString(), currentLine + 2, y + 10);
+          graph.fillText(label.toString(), currentLine + 2, y.current + 10);
         }
       }
 
@@ -104,8 +106,8 @@ function GraphicCalculator() {
             : -gridSpacing;
 
       if (direction === "up" || direction === "left")
-        currentLine -= gridSpacing / 5;
-      else currentLine += gridSpacing / 5;
+        currentLine -= (gridSpacing / 5) * zoom.current;
+      else currentLine += (gridSpacing / 5) * zoom.current;
 
       index++;
 
@@ -118,22 +120,19 @@ function GraphicCalculator() {
     return eval(evalEquation);
   }
 
-  function setData(
-    x: number,
-    y: number,
-    data: [number, number][],
-    width: number,
-  ) {
+  function setData(data: [number, number][], width: number) {
     let calcX = 0;
 
     while (calcX < width + 1) {
       let _x = calcX;
-      _x -= x;
+      _x -= x.current;
+      _x /= zoom.current;
 
       let calcY = calculate(_x);
 
       calcY *= -1;
-      calcY += y;
+      calcY *= zoom.current;
+      calcY += y.current;
 
       data.push([calcX, calcY]);
       calcX += 1;
@@ -147,13 +146,13 @@ function GraphicCalculator() {
     graph.strokeStyle = "rgba(0, 90, 230)";
     graph.lineWidth = 1;
 
-    data.forEach(([x, y]) => graph.lineTo(x, y));
+    data.forEach(([ptX, ptY]) => graph.lineTo(ptX, ptY));
 
     graph.stroke();
   }
 
-  useEffect(() => {
-    const canvas: HTMLCanvasElement = document.querySelector(".grid")!;
+  const plot = () => {
+    const canvas: HTMLCanvasElement = canvasElem.current!;
     const graph: CanvasRenderingContext2D = canvas.getContext("2d")!;
     const { innerWidth, innerHeight } = window;
     const responsiveWidth = Math.round(0.5 * innerWidth);
@@ -167,33 +166,51 @@ function GraphicCalculator() {
       : (canvas.height = responsiveHeight);
 
     const { width, height } = canvas;
-    const x = width / 2;
-    const y = height / 2;
+
+    x.current = width / 2;
+    y.current = height / 2;
 
     graph.clearRect(0, 0, width, height);
 
-    createAxis(graph, { x: width }, x, y);
-    createAxis(graph, { x: 0 }, x, y);
-    createAxis(graph, { y: height }, x, y);
-    createAxis(graph, { y: 0 }, x, y);
+    createAxis(graph, { x: width });
+    createAxis(graph, { x: 0 });
+    createAxis(graph, { y: height });
+    createAxis(graph, { y: 0 });
 
     const gridSpacing = calculateGridSpacing(width, height);
 
-    createGrid(graph, gridSpacing, "up", x, y, width, height);
-    createGrid(graph, gridSpacing, "down", x, y, width, height);
-    createGrid(graph, gridSpacing, "left", x, y, width, height);
-    createGrid(graph, gridSpacing, "right", x, y, width, height);
+    createGrid(graph, gridSpacing, "up", width, height);
+    createGrid(graph, gridSpacing, "down", width, height);
+    createGrid(graph, gridSpacing, "left", width, height);
+    createGrid(graph, gridSpacing, "right", width, height);
 
     const data: [number, number][] = [];
 
-    setData(x, y, data, width);
+    setData(data, width);
     plotData(data, graph);
+  };
+
+  useEffect(() => {
+    plot();
   });
+
+  const handleScroll = (e: React.WheelEvent<HTMLCanvasElement>) => {
+    const { wheelDeltaY } = e.nativeEvent as WheelEvent;
+
+    if (wheelDeltaY > 0) zoom.current = +(zoom.current * 1.05);
+    else zoom.current = +(zoom.current / 1.05);
+
+    plot();
+  };
 
   return (
     <div className="graph-calc">
       <FunctionInput equation={equation} setEquation={setEquation} />
-      <canvas className="grid" />
+      <canvas
+        ref={canvasElem}
+        className="grid"
+        onWheel={(e) => handleScroll(e)}
+      />
     </div>
   );
 }
